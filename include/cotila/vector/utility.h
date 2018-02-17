@@ -56,6 +56,17 @@ template <std::size_t N, typename F> constexpr decltype(auto) generate(F &&f) {
   return elementwise(f, iota<N, std::size_t>());
 }
 
+template <typename T, typename U, std::size_t N>
+constexpr vector<std::tuple<T, U>, N> zip(vector<T, N> vec1,
+                                          vector<U, N> vec2) {
+  std::array<std::tuple<T, U>, N> zipped = {};
+  for (std::size_t i = 0; i < N; ++i) {
+    std::get<0>(zipped[i]) = vec1[i];
+    std::get<1>(zipped[i]) = vec2[i];
+  }
+  return zipped;
+}
+
 } // namespace cotila
 
 #endif // COTILA_VECTOR_UTILITY_H_

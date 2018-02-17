@@ -64,6 +64,11 @@ static_assert(generate<4>([](auto i) { return double(i * i); }) ==
                   make_vector(0., 1., 4., 9.),
               "generate");
 
+static_assert(make_vector(std::make_tuple(1, 4), std::make_tuple(2, 5),
+                          std::make_tuple(3, 6)) ==
+                  zip(make_vector(1, 2, 3), make_vector(4, 5, 6)),
+              "zip");
+
 } // namespace test
 } // namespace cotila
 
