@@ -12,6 +12,7 @@ target_include_directories(cotila INTERFACE
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>	
 )
 target_compile_features(cotila INTERFACE cxx_std_20)
+
 add_library(cotila::cotila ALIAS cotila)
 
 # Docs build
