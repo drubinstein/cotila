@@ -29,10 +29,10 @@ struct tensor {
     return array[i];
   }
 
-  constexpr const tensor<T, std::size_t d, std::size_t s...> &at(
-      std::size_t d, std::size_t s...) {
-    return array[d].at(s...);
-  }
+  constexpr tensor<T, Shape...> *begin() noexcept { return array; }
+  constexpr tensor<T, Shape...> *end() noexcept { return array + Dimension; }
+  constexpr const tensor<T, Shape...> *cbegin() const noexcept { return array; }
+  constexpr const tensor<T, Shape...> *cend() const noexcept { return array + Dimension; }
 
   tensor<T, Shape...> array[Dimension];  ///< @private
 };
@@ -46,6 +46,11 @@ struct tensor<T, Dimension> {
   using size_type = std::size_t;
   constexpr T operator[](std::size_t i) noexcept { return array[i]; }
   constexpr const T operator[](size_type i) const noexcept { return array[i]; }
+  
+  constexpr T *begin() noexcept { return array; }
+  constexpr T *end() noexcept { return array + Dimension; }
+  constexpr const T *cbegin() const noexcept { return array; }
+  constexpr const T *cend() const noexcept { return array + Dimension; }
 
   T array[Dimension];  ///< @private
 };
