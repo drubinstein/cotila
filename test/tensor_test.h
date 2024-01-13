@@ -8,10 +8,10 @@ namespace cotila {
 namespace test {
 
 // Uniform initialization
-constexpr tensor<double, 3, 3> m1 = {
-    1., 2., 3.,
+constexpr tensor<double, 1, 3, 3> t1 = {
+    {1., 2., 3.,
     4., 5., 6.,
-    7., 8., 9.};
+    7., 8., 9.}};
 
 
 } // namespace test
