@@ -12,5 +12,6 @@
 #include <cotila/vector/vector.h>
 #include <cotila/tensor/tensor.h>
 #include <cotila/tensor/utility.h>
+#include <cotila/tensor/operators.h>
 
 #endif // COTILA_COTILA_H_
