@@ -87,7 +87,6 @@ struct tensor<T, Dimension> {
 /** @name cotila::tensor deduction guides */
 ///@{
 
-// TODO: Can this be done with a variadic macro?
 /** @brief deduction guide for aggregate initialization
  *  @relatesalso cotila::tensor
  *
@@ -104,6 +103,12 @@ tensor(const T (&)[M][N]) -> tensor<T, M, N>;
 
 template <typename T, std::size_t M, std::size_t N, std::size_t O>
 tensor(const T (&)[M][N][O]) -> tensor<T, M, N, O>;
+
+template <typename T, std::size_t M, std::size_t N, std::size_t O, std::size_t P>
+tensor(const T (&)[M][N][O][P]) -> tensor<T, M, N, O, P>;
+
+template <typename T, std::size_t M, std::size_t N, std::size_t O, std::size_t P, std::size_t Q>
+tensor(const T (&)[M][N][O][P][Q]) -> tensor<T, M, N, O, P, Q>;
 
 ///@}
 
