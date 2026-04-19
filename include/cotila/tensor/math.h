@@ -111,6 +111,17 @@ constexpr void set_array(tensor<T, Dim, Rest...> &t, T v,
 
 }  // namespace detail
 
+/** @brief tensordot specialization: two rank-1 tensors contracted to a scalar */
+template <std::size_t AxisA, std::size_t AxisB,
+          typename T, std::size_t NA, std::size_t NB>
+constexpr T tensordot(const tensor<T, NA> &a, const tensor<T, NB> &b) {
+  static_assert(AxisA == 0 && AxisB == 0, "rank-1 tensordot axes must be 0");
+  static_assert(NA == NB, "contracted axes must have equal size");
+  T acc = T{};
+  for (std::size_t i = 0; i < NA; ++i) acc += a[i] * b[i];
+  return acc;
+}
+
 /** @brief contract two tensors over one axis each
  *  @tparam AxisA index of the contracted axis in `a`
  *  @tparam AxisB index of the contracted axis in `b`

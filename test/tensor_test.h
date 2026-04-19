@@ -95,6 +95,10 @@ static_assert(AB[0][1] == 1*8 + 2*10 + 3*12, "matmul [0][1]");
 static_assert(AB[1][0] == 4*7 + 5*9 + 6*11, "matmul [1][0]");
 static_assert(AB[1][1] == 4*8 + 5*10 + 6*12, "matmul [1][1]");
 
+constexpr tensor<double, 3> u = {{1.0, 2.0, 3.0}};
+constexpr tensor<double, 3> v = {{4.0, 5.0, 6.0}};
+static_assert(tensordot<0, 0>(u, v) == 1*4 + 2*5 + 3*6, "vector dot");
+
 }  // namespace test
 }  // namespace cotila
 
