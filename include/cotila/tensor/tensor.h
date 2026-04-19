@@ -9,6 +9,7 @@
 #include <cotila/detail/tmp.h>
 #include <cotila/vector/vector.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <tuple>
 #include <type_traits>
@@ -27,10 +28,10 @@ struct tensor {
   using value_type = T;
   using size_type = std::size_t;
 
-  constexpr tensor<T, Shape...> operator[](std::size_t i) noexcept {
+  constexpr tensor<T, Shape...> &operator[](std::size_t i) noexcept {
     return array[i];
   }
-  constexpr const tensor<T, Shape...> operator[](size_type i) const noexcept {
+  constexpr const tensor<T, Shape...> &operator[](size_type i) const noexcept {
     return array[i];
   }
 
@@ -62,8 +63,8 @@ struct tensor<T, Dimension> {
 
   using value_type = T;
   using size_type = std::size_t;
-  constexpr T operator[](std::size_t i) noexcept { return array[i]; }
-  constexpr const T operator[](size_type i) const noexcept { return array[i]; }
+  constexpr T &operator[](std::size_t i) noexcept { return array[i]; }
+  constexpr const T &operator[](size_type i) const noexcept { return array[i]; }
 
   constexpr T *begin() noexcept { return array; }
   constexpr T *end() noexcept { return array + Dimension; }
