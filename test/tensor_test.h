@@ -39,6 +39,14 @@ static_assert((t3 * 3.0)[1] == 3.0, "tensor * scalar");
 static_assert((t31 / 3.0)[1][0] == 1.0, "tensor / scalar");
 static_assert((t33 - 3.0)[1][0] == -2.0, "tensor - scalar");
 
+constexpr auto g22 = generate<double, 2, 2>(
+    [](std::size_t i, std::size_t j) { return double(i + j); });
+
+static_assert(g22[0][0] == 0.0, "generate[0][0]");
+static_assert(g22[0][1] == 1.0, "generate[0][1]");
+static_assert(g22[1][0] == 1.0, "generate[1][0]");
+static_assert(g22[1][1] == 2.0, "generate[1][1]");
+
 }  // namespace test
 }  // namespace cotila
 

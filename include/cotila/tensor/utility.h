@@ -37,41 +37,21 @@ elementwise(F f, const tensor<T, Dim, Rest...> &t,
   return out;
 }
 
-template <typename U, typename F, typename T, std::size_t Dim, typename... Args>
-// requires all_same<std::size_t, Args...>
-constexpr decltype(auto) generate(F &&f, Args... args) {
-  tensor<U, Dim> generated = {};
-  for (std::size_t i = 0; i < Dim; ++i) {
-    generated[i] = std::apply(f, std::forward_as_tuple(args...));
-  }
-}
-
-template <typename U, typename F, typename T, std::size_t Dim,
-          std::size_t... Rest, typename... Args>
-//requires all_same<std::size_t, Args...>
-constexpr decltype(auto) generate(F &&f, Args... args) {
-  tensor<U, Dim, Rest...> generated = {};
-  for (std::size_t i = 0; i < Dim; ++i) {
-    generated[i] = generate<U, F, T, Rest...>(f, Dim, args...);
-  }
-  return generated;
-}
-
-/** @brief generates a tensor as a function of its indices
- *  @param f a function that operates on two integer indices
- *  @return a tensor with type matching the return type of f such that \f$
- * \textbf{t}_{ij...} = f(i, j, ...) \f$
- *
- *  Generates a tensor as a function of its indices.
+/** @brief builds a tensor of the requested shape from a function of indices
+ *  @param f invocable as f(i0, i1, ...) returning T, one arg per dimension
+ *  @return a tensor where element [i0][i1]...[ik] equals f(i0, i1, ..., ik)
  */
-template <typename U, typename F, typename T, std::size_t Dim,
-          std::size_t... Rest>
-constexpr decltype(auto) generate(F &&f) {
-  tensor<U, Dim, Rest...> generated = {};
+template <typename T, std::size_t Dim, std::size_t... Rest,
+          typename F, typename... Idx>
+constexpr tensor<T, Dim, Rest...> generate(F f, Idx... prior) {
+  tensor<T, Dim, Rest...> out = {};
   for (std::size_t i = 0; i < Dim; ++i) {
-    generated[i] = generate<U, F, T, Rest...>(f, Dim);
+    if constexpr (sizeof...(Rest) == 0)
+      out[i] = f(prior..., i);
+    else
+      out[i] = generate<T, Rest...>(f, prior..., i);
   }
-  return generated;
+  return out;
 }
 
 }  // namespace cotila
