@@ -48,10 +48,10 @@ constexpr bool operator!=(const tensor<T, N...> &a, const tensor<T, N...> &b) {
 }
 
 /** @brief computes the sum of a tensor and a scalar
- *  @param m an tensor of type T
+ *  @param m a tensor of type T
  *  @param a a scalar of type T
- *  @return \f$ \textbf{m} + a \f$ such that \f$ \left(\textbf{m} +
- * a\right)_{ij} = \textbf{m}_{ij} + a \f$
+ *  @return A new tensor such that each element is the sum of the corresponding
+ *  element of m + a.
  *
  *  Computes the sum of a tensor and a scalar.
  */
@@ -62,9 +62,9 @@ constexpr tensor<T, N...> operator+(const tensor<T, N...> &m, T a) {
 
 /** @brief computes the sum of a tensor and a scalar
  *  @param a a scalar of type T
- *  @param m an \f$ N \times M \f$ tensor of type T
- *  @return \f$ a + \textbf{m} \f$ such that \f$ \left(a +
- * \textbf{m}\right)_{ij} = a + \textbf{m}_{ij} \f$
+ *  @param m a tensor of type T
+ *  @return A new tensor such that each element is the sum of the corresponding
+ *  element of m + a.
  *
  *  Computes the sum of a tensor and a scalar.
  */
@@ -73,13 +73,13 @@ constexpr tensor<T, N...> operator+(T a, const tensor<T, N...> &m) {
   return m + a;
 }
 
-/** @brief computes the tensor sum
- *  @param a an \f$ N \times M \f$ tensor of type T
- *  @param b an \f$ N \times M \f$ tensor of type T
- *  @return \f$ \textbf{a} + \textbf{b} \f$ such that \f$ \left(\textbf{a} +
- * \textbf{b}\right)_{ij} = \textbf{a}_{ij} + \textbf{b}_{ij} \f$
+/** @brief computes elementwise the sum of two tensors
+ *  @param a a tensor of type T
+ *  @param b a tensor of type T
+ *  @return A new tensor such that each element is the sum of corresponding
+ *  elements of a and b.
  *
- *  Computes the vector sum.
+ *  Computes the elementwise sum.
  */
 template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator+(const tensor<T, N...> &a,
@@ -88,12 +88,12 @@ constexpr tensor<T, N...> operator+(const tensor<T, N...> &a,
 }
 
 /** @brief computes the product of a tensor and a scalar
- *  @param m an \f$ N \times M \f$ tensor of type T
+ *  @param m a tensor of type T
  *  @param a a scalar of type T
- *  @return \f$ \textbf{m}a \f$ such that \f$ \left(\textbf{m} a\right)_{ij} =
- * \textbf{m}_{ij} a \f$
+ *  @return A new tensor such that each element is the product of the corresponding
+ *  element of m * a.
  *
- *  Computes the sum of a tensor and a scalar.
+ *  Computes the product of a tensor and a scalar.
  */
 template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator*(const tensor<T, N...> &m, T a) {
@@ -102,11 +102,11 @@ constexpr tensor<T, N...> operator*(const tensor<T, N...> &m, T a) {
 
 /** @brief computes the product of a tensor and a scalar
  *  @param a a scalar of type T
- *  @param m an \f$ N \times M \f$ tensor of type T
- *  @return \f$ a\textbf{m} \f$ such that \f$ \left(a\textbf{m}\right)_{ij} =
- * a\textbf{m}_{ij} \f$
+ *  @param m a tensor of type T
+ *  @return A new tensor such that each element is the product of the corresponding
+ *  element of m * a.
  *
- *  Computes the sum of a tensor and a scalar.
+ *  Computes the product of a tensor and a scalar.
  */
 template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator*(T a, const tensor<T, N...> &m) {
@@ -114,12 +114,12 @@ constexpr tensor<T, N...> operator*(T a, const tensor<T, N...> &m) {
 }
 
 /** @brief computes the Hadamard product
- *  @param a an \f$ N \times M \f$ tensor of type T
- *  @param b an \f$ N \times M \f$ tensor of type T
- *  @return \f$ \textbf{a} \circ \textbf{b} \f$ such that \f$ \left(\textbf{a}
- * \circ \textbf{b}\right)_{ij} = \textbf{a}_{ij} \textbf{b}_{ij} \f$
+ *  @param A a tensor of type T
+ *  @param b a tensor of type T
+ *  @return A new tensor such that each element is the product of corresponding
+ *  elements of a and b.
  *
- *  Computes the Hadamard, or elementwise, product of two vectors.
+ *  Computes the Hadamard, or elementwise, product of two tensors.
  */
 template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator*(const tensor<T, N...> &a,
@@ -127,28 +127,26 @@ constexpr tensor<T, N...> operator*(const tensor<T, N...> &a,
   return elementwise(std::multiplies<T>(), a, b);
 }
 
-/** @brief computes the quotient between a tensor and a scalar
- *  @param m an \f$ N \times M \f$ tensor of type T
+/** @brief computes the quotient of a tensor and a scalar
+ *  @param m a tensor of type T
  *  @param a a scalar of type T
- *  @return \f$ \textbf{m}/a \f$ such that \f$ \left(\textbf{m}/a\right)_{ij} =
- * \frac{\textbf{m}_{ij}}{a} \f$
+ *  @return A new tensor such that each element is the quotient of the corresponding
+ *  element of m * a.
  *
- *  Computes division between a tensor and a scalar.
+ *  Computes the quotient of a tensor and a scalar.
  */
 template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator/(T a, const tensor<T, N...> &m) {
   return elementwise([a](T x) { return a / x; }, m);
 }
 
-/** @brief computes the elementwise tensor quotient
- *  @param a an \f$ N \times M \f$ tensor of type T
- *  @param b an \f$ N \times M \f$ tensor of type T
- *  @return \f$ \textbf{a} \circ \textbf{b}' \f$ such that \f$
- * {\textbf{b}_{ij}}' = \left(\textbf{b}_{ij}\right)^{-1}\f$ and \f$
- * \left(\textbf{a} \circ \textbf{b}'\right)_{ij} = \textbf{a}_{ij}
- * {\textbf{b}'}_{ij} \f$
+/** @brief computes the quotient of a tensor and a scalar
+ *  @param a a scalar of type T
+ *  @param m a tensor of type T
+ *  @return A new tensor such that each element is the quotient of the corresponding
+ *  element of m * a.
  *
- *  Computes elementwise division between two tensors
+ *  Computes the quotient of a tensor and a scalar.
  */
 template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator/(const tensor<T, N...> &a,
