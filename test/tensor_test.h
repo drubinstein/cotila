@@ -99,6 +99,29 @@ constexpr tensor<double, 3> u = {{1.0, 2.0, 3.0}};
 constexpr tensor<double, 3> v = {{4.0, 5.0, 6.0}};
 static_assert(tensordot<0, 0>(u, v) == 1*4 + 2*5 + 3*6, "vector dot");
 
+// Contract axis 2 of a (size 4) with axis 0 of b (size 4).
+// Result shape: (2, 3) ++ (5,) = (2, 3, 5).
+constexpr tensor<double, 2, 3, 4> C = generate<double, 2, 3, 4>(
+    [](std::size_t i, std::size_t j, std::size_t k) {
+      return double(i * 100 + j * 10 + k);
+    });
+constexpr tensor<double, 4, 5> D = generate<double, 4, 5>(
+    [](std::size_t k, std::size_t l) { return double(k * 10 + l); });
+constexpr auto CD = tensordot<2, 0>(C, D);
+static_assert(
+    std::is_same_v<decltype(CD), const tensor<double, 2, 3, 5>>,
+    "tensordot<2,0> result shape");
+
+// Spot-check: CD[0][0][0] = sum_k C[0][0][k] * D[k][0]
+//                       = 0*0 + 1*10 + 2*20 + 3*30 = 140
+static_assert(CD[0][0][0] == 140.0, "tensordot<2,0>[0][0][0]");
+
+// Spot-check: CD[1][2][4] = sum_k C[1][2][k] * D[k][4]
+//                       = (100+20+0)*4 + (100+20+1)*14 + (100+20+2)*24 + (100+20+3)*34
+//                       = 120*4 + 121*14 + 122*24 + 123*34
+//                       = 480 + 1694 + 2928 + 4182 = 9284
+static_assert(CD[1][2][4] == 9284.0, "tensordot<2,0>[1][2][4]");
+
 }  // namespace test
 }  // namespace cotila
 
