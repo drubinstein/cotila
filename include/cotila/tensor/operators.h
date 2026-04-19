@@ -18,18 +18,10 @@ namespace cotila {
  *
  *  Checks the equality of two tensors.
  */
-template <typename T, std::size_t N, std::size_t... M>
-constexpr bool operator==(const tensor<T, N, M...> &a,
-                          const tensor<T, N, M...> &b) {
-  for (std::size_t i = 0; i < N; ++i) {
-    if (a[i] != b[i]) return false;
-  }
-  return true;
-}
-
-template <typename T, std::size_t N>
-constexpr bool operator==(const tensor<T, N> &a, const tensor<T, N> &b) {
-  for (std::size_t i = 0; i < N; ++i) {
+template <typename T, std::size_t Dim, std::size_t... Rest>
+constexpr bool operator==(const tensor<T, Dim, Rest...> &a,
+                          const tensor<T, Dim, Rest...> &b) {
+  for (std::size_t i = 0; i < Dim; ++i) {
     if (a[i] != b[i]) return false;
   }
   return true;
@@ -127,6 +119,12 @@ constexpr tensor<T, N...> operator*(const tensor<T, N...> &a,
   return elementwise(std::multiplies<T>(), a, b);
 }
 
+/** @brief tensor / scalar (elementwise) */
+template <typename T, std::size_t... N>
+constexpr tensor<T, N...> operator/(const tensor<T, N...> &m, T a) {
+  return elementwise([a](T x) { return x / a; }, m);
+}
+
 /** @brief computes the quotient of a tensor and a scalar
  *  @param m a tensor of type T
  *  @param a a scalar of type T
@@ -152,6 +150,25 @@ template <typename T, std::size_t... N>
 constexpr tensor<T, N...> operator/(const tensor<T, N...> &a,
                                     const tensor<T, N...> &b) {
   return elementwise(std::divides<T>(), a, b);
+}
+
+/** @brief tensor - scalar (elementwise) */
+template <typename T, std::size_t... N>
+constexpr tensor<T, N...> operator-(const tensor<T, N...> &m, T a) {
+  return elementwise([a](T x) { return x - a; }, m);
+}
+
+/** @brief scalar - tensor (elementwise) */
+template <typename T, std::size_t... N>
+constexpr tensor<T, N...> operator-(T a, const tensor<T, N...> &m) {
+  return elementwise([a](T x) { return a - x; }, m);
+}
+
+/** @brief tensor - tensor (elementwise) */
+template <typename T, std::size_t... N>
+constexpr tensor<T, N...> operator-(const tensor<T, N...> &a,
+                                    const tensor<T, N...> &b) {
+  return elementwise(std::minus<T>(), a, b);
 }
 
 /** }@*/
