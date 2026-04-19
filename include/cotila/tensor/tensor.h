@@ -22,7 +22,8 @@ struct shape {};
 
 template <typename T, std::size_t Dimension, std::size_t... Shape>
 struct tensor {
-  // TODO: Add an assertion for non as 0
+  static_assert(Dimension != 0 && ((Shape != 0) && ...),
+                "tensor dimensions must be positive");
   COTILA_DETAIL_ASSERT_ARITHMETIC(T)
 
   using value_type = T;
@@ -58,7 +59,7 @@ struct tensor {
 
 template <typename T, std::size_t Dimension>
 struct tensor<T, Dimension> {
-  // TODO: Add an assertion for non as 0
+  static_assert(Dimension != 0, "tensor dimensions must be positive");
   COTILA_DETAIL_ASSERT_ARITHMETIC(T)
 
   using value_type = T;
