@@ -13,42 +13,28 @@ namespace cotila {
  */
 
 
-template <typename F, typename T, typename... Tensors, std::size_t Dim, 
-          typename U =
-              std::invoke_result_t<F, T, typename Tensors::value_type...>>
-// requires all_same<T, Tensors...>
-constexpr tensor<U, Dim> elementwise(F f, const tensor<T, Dim> &t,
-                                     const Tensors &...tensors) {
-  tensor<U, Dim> op_applied = {};
-  for (std::size_t i = 0; i < Dim; ++i)
-    op_applied[i] = std::apply(f, std::forward_as_tuple(t[i], tensors[i]...));
-  return op_applied;
-}
-
-
-/** @brief applies a function elementwise between many tensors
- *  @param f a function of type F that operates on many scalars of type T and
- * returns a scalar of type U
- *  @param v an N-vector of type T
- *  @param tensors additional tensors of type T with the same shape
- *  @return an tensor of type T with elements described by \f$
- * f\left(\textbf{t}_{ij...}, \ldots\right) \f$
- *
- *  Applies a function elementwise between many tensors.
+/** @brief applies a function elementwise across tensors of the same shape
+ *  @param f a function invocable on scalars of matching types
+ *  @param t the first tensor (its shape determines the result shape)
+ *  @param tensors zero or more co-tensors of identical shape
+ *  @return a tensor with the same shape whose elements are f applied
+ *          pointwise at the leaves.
  */
-
-template <typename F, typename T, typename... Tensors, std::size_t Dim,
-          std::size_t... Rest,
-          typename U =
-              std::invoke_result_t<F, T, typename Tensors::value_type...>>
-// requires all_same<T, Tensors...>
-constexpr tensor<U, Dim, Rest...> elementwise(F f,
-                                              const tensor<T, Dim, Rest...> &t,
-                                              const Tensors &...tensors) {
-  tensor<U, Dim, Rest...> op_applied = {};
-  for (std::size_t i = 0; i < Dim; ++i)
-    op_applied[i] = elementwise<F, T, Tensors..., Rest...>(f, t[i], tensors[i]...);
-  return op_applied;
+template <typename F, typename T, std::size_t Dim, std::size_t... Rest,
+          typename... Tensors,
+          typename U = std::invoke_result_t<F, T,
+                                            typename Tensors::value_type...>>
+constexpr tensor<U, Dim, Rest...>
+elementwise(F f, const tensor<T, Dim, Rest...> &t,
+            const Tensors &...tensors) {
+  tensor<U, Dim, Rest...> out = {};
+  for (std::size_t i = 0; i < Dim; ++i) {
+    if constexpr (sizeof...(Rest) == 0)
+      out[i] = std::apply(f, std::forward_as_tuple(t[i], tensors[i]...));
+    else
+      out[i] = elementwise(f, t[i], tensors[i]...);
+  }
+  return out;
 }
 
 template <typename U, typename F, typename T, std::size_t Dim, typename... Args>
