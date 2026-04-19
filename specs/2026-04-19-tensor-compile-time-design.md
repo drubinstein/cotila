@@ -90,23 +90,27 @@ Callable as `generate<double, 3, 3, 1>([](auto... idx){ return /* ... */; })`.
 
 ### 5.4 Multi-axis access helpers (`include/cotila/tensor/utility.h`)
 
-Used by `tensordot`. Both are `constexpr`. `at` returns by const reference (valid because `operator[]` now returns a reference). `set` mutates in place.
+Used by `tensordot`. Both are `constexpr`. Each is a **single** template that matches the primary `tensor<T, Dim, Rest...>`; branching on `sizeof...(Rest) == 0` uses `if constexpr`, same pattern as the unified `elementwise`. This avoids the base-vs-recursive overload-ambiguity class of bug. Index count is checked at the call site with `static_assert`.
 
 ```cpp
-template <typename T, std::size_t Dim>
-constexpr const T& at(const tensor<T, Dim>& t, std::size_t i) { return t[i]; }
-
 template <typename T, std::size_t Dim, std::size_t... Rest, typename... Is>
-constexpr const T& at(const tensor<T, Dim, Rest...>& t, std::size_t i, Is... rest) {
-  return at(t[i], rest...);
+constexpr decltype(auto) at(const tensor<T, Dim, Rest...>& t,
+                            std::size_t i, Is... rest) {
+  static_assert(sizeof...(Is) == sizeof...(Rest), "wrong number of indices");
+  if constexpr (sizeof...(Rest) == 0)
+    return t[i];                  // const T&
+  else
+    return at(t[i], rest...);
 }
 
-template <typename T, std::size_t Dim>
-constexpr void set(tensor<T, Dim>& t, T v, std::size_t i) { t[i] = v; }
-
 template <typename T, std::size_t Dim, std::size_t... Rest, typename... Is>
-constexpr void set(tensor<T, Dim, Rest...>& t, T v, std::size_t i, Is... rest) {
-  set(t[i], v, rest...);
+constexpr void set(tensor<T, Dim, Rest...>& t, T v,
+                   std::size_t i, Is... rest) {
+  static_assert(sizeof...(Is) == sizeof...(Rest), "wrong number of indices");
+  if constexpr (sizeof...(Rest) == 0)
+    t[i] = v;
+  else
+    set(t[i], v, rest...);
 }
 ```
 
