@@ -122,6 +122,43 @@ static_assert(CD[0][0][0] == 140.0, "tensordot<2,0>[0][0][0]");
 //                       = 480 + 1694 + 2928 + 4182 = 9284
 static_assert(CD[1][2][4] == 9284.0, "tensordot<2,0>[1][2][4]");
 
+// Symmetric scalars (operator with scalar on the left).
+static_assert((1.0 + t1)[0] == 2.0, "scalar + tensor");
+static_assert((3.0 * t3)[1] == 3.0, "scalar * tensor");
+static_assert((6.0 / t31)[1][0] == 2.0, "scalar / tensor");
+static_assert((3.0 - t33)[1][0] == 2.0, "scalar - tensor");
+
+// Elementwise tensor-tensor.
+constexpr tensor<double, 2, 2> P = {{
+    {1.0, 2.0},
+    {3.0, 4.0}
+}};
+constexpr tensor<double, 2, 2> Q = {{
+    {5.0, 6.0},
+    {7.0, 8.0}
+}};
+static_assert((P + Q)[0][0] == 6.0, "tensor + tensor rank-2");
+static_assert((P + Q)[1][1] == 12.0, "tensor + tensor rank-2");
+static_assert((P - Q)[1][0] == -4.0, "tensor - tensor rank-2");
+static_assert((P * Q)[0][1] == 12.0, "tensor * tensor rank-2 (hadamard)");
+static_assert((Q / P)[0][0] == 5.0, "tensor / tensor rank-2");
+
+constexpr tensor<double, 2, 2, 2> R1 = {{
+    {{ {1.0, 2.0}, {3.0, 4.0} }},
+    {{ {5.0, 6.0}, {7.0, 8.0} }}
+}};
+constexpr tensor<double, 2, 2, 2> R2 = {{
+    {{ {1.0, 1.0}, {1.0, 1.0} }},
+    {{ {1.0, 1.0}, {1.0, 1.0} }}
+}};
+static_assert((R1 + R2)[0][1][1] == 5.0, "tensor + tensor rank-3");
+static_assert((R1 - R2)[1][0][0] == 4.0, "tensor - tensor rank-3");
+
+// Equality.
+static_assert(P == P, "tensor == self");
+static_assert(!(P == Q), "tensor != other");
+static_assert(P != Q, "operator!=");
+
 }  // namespace test
 }  // namespace cotila
 
