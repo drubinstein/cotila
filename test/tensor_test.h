@@ -57,6 +57,28 @@ static_assert(roundtrip == 7.0, "at/set round trip");
 static_assert(at(t331, 0, 1, 0) == 2.0, "at on 3-D tensor");
 static_assert(at(t331, 2, 2, 0) == 9.0, "at on 3-D tensor");
 
+// Shape helpers.
+static_assert(
+    std::is_same_v<detail::seq_drop_t<1, 2, 3, 4>, std::index_sequence<2, 4>>,
+    "seq_drop middle");
+static_assert(
+    std::is_same_v<detail::seq_drop_t<0, 2, 3, 4>, std::index_sequence<3, 4>>,
+    "seq_drop first");
+static_assert(
+    std::is_same_v<detail::seq_drop_t<2, 2, 3, 4>, std::index_sequence<2, 3>>,
+    "seq_drop last");
+static_assert(
+    std::is_same_v<detail::seq_cat_t<std::index_sequence<1, 2>,
+                                     std::index_sequence<3, 4>>,
+                   std::index_sequence<1, 2, 3, 4>>,
+    "seq_cat");
+static_assert(detail::pack_at<0, 5, 6, 7> == 5, "pack_at 0");
+static_assert(detail::pack_at<2, 5, 6, 7> == 7, "pack_at 2");
+static_assert(
+    std::is_same_v<detail::tensor_from_seq_t<double, std::index_sequence<2, 3>>,
+                   tensor<double, 2, 3>>,
+    "tensor_from_seq");
+
 }  // namespace test
 }  // namespace cotila
 
