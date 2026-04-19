@@ -79,6 +79,22 @@ static_assert(
                    tensor<double, 2, 3>>,
     "tensor_from_seq");
 
+// tensordot<1, 0> is matmul. A is 2x3, B is 3x2. Expected result is 2x2.
+constexpr tensor<double, 2, 3> A = {{
+    {1.0, 2.0, 3.0},
+    {4.0, 5.0, 6.0}
+}};
+constexpr tensor<double, 3, 2> B = {{
+    {7.0, 8.0},
+    {9.0, 10.0},
+    {11.0, 12.0}
+}};
+constexpr auto AB = tensordot<1, 0>(A, B);
+static_assert(AB[0][0] == 1*7 + 2*9 + 3*11, "matmul [0][0]");
+static_assert(AB[0][1] == 1*8 + 2*10 + 3*12, "matmul [0][1]");
+static_assert(AB[1][0] == 4*7 + 5*9 + 6*11, "matmul [1][0]");
+static_assert(AB[1][1] == 4*8 + 5*10 + 6*12, "matmul [1][1]");
+
 }  // namespace test
 }  // namespace cotila
 
