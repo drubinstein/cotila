@@ -47,6 +47,16 @@ static_assert(g22[0][1] == 1.0, "generate[0][1]");
 static_assert(g22[1][0] == 1.0, "generate[1][0]");
 static_assert(g22[1][1] == 2.0, "generate[1][1]");
 
+constexpr auto roundtrip = []() {
+  tensor<double, 2, 3> r = {};
+  set(r, 7.0, 1, 2);
+  return at(r, 1, 2);
+}();
+static_assert(roundtrip == 7.0, "at/set round trip");
+
+static_assert(at(t331, 0, 1, 0) == 2.0, "at on 3-D tensor");
+static_assert(at(t331, 2, 2, 0) == 9.0, "at on 3-D tensor");
+
 }  // namespace test
 }  // namespace cotila
 

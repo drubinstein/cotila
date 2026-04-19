@@ -54,6 +54,30 @@ constexpr tensor<T, Dim, Rest...> generate(F f, Idx... prior) {
   return out;
 }
 
+/** @brief read a scalar at a multi-index */
+template <typename T, std::size_t Dim, std::size_t... Rest, typename... Is>
+constexpr decltype(auto) at(const tensor<T, Dim, Rest...> &t,
+                            std::size_t i, Is... rest) {
+  static_assert(sizeof...(Is) == sizeof...(Rest),
+                "wrong number of indices for tensor rank");
+  if constexpr (sizeof...(Rest) == 0)
+    return t[i];
+  else
+    return at(t[i], rest...);
+}
+
+/** @brief write a scalar at a multi-index */
+template <typename T, std::size_t Dim, std::size_t... Rest, typename... Is>
+constexpr void set(tensor<T, Dim, Rest...> &t, T v,
+                   std::size_t i, Is... rest) {
+  static_assert(sizeof...(Is) == sizeof...(Rest),
+                "wrong number of indices for tensor rank");
+  if constexpr (sizeof...(Rest) == 0)
+    t[i] = v;
+  else
+    set(t[i], v, rest...);
+}
+
 }  // namespace cotila
 
 #endif  // COTILA_TENSOR_UTILITY_H_
