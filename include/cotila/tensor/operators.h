@@ -1,11 +1,9 @@
-#ifndef COTILA_tensor_OPERATORS_H_
-#define COTILA_tensor_OPERATORS_H_
+#ifndef COTILA_TENSOR_OPERATORS_H_
+#define COTILA_TENSOR_OPERATORS_H_
 
 #include <cotila/tensor/tensor.h>
 
 namespace cotila {
-
-// TODO: REPAIR COMMENTS
 
 /** \addtogroup tensor
  *  @{
@@ -171,8 +169,8 @@ constexpr tensor<T, N...> operator-(const tensor<T, N...> &a,
   return elementwise(std::minus<T>(), a, b);
 }
 
-/** }@*/
+/** @} */
 
 }  // namespace cotila
 
-#endif  // COTILA_VECTOR_OPERATORS_H_
+#endif  // COTILA_TENSOR_OPERATORS_H_

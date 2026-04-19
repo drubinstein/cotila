@@ -53,10 +53,6 @@ using tensor_from_seq_t = typename tensor_from_seq<T, Seq>::type;
 template <std::size_t I, std::size_t... S>
 constexpr std::size_t pack_at = std::array<std::size_t, sizeof...(S)>{S...}[I];
 
-}  // namespace detail
-
-namespace detail {
-
 // Increment a multi-index odometer (LSB = last axis). Returns false when wrapped.
 template <std::size_t N>
 constexpr bool inc_odometer(std::array<std::size_t, N> &idx,
